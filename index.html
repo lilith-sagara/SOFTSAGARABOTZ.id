@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SAGARA SOT BOTZ — Dashboard</title>
+
+  <style>
+    :root{
+      --bg-0: #071026;   /* very dark navy */
+      --bg-1: #081226;
+      --panel: linear-gradient(180deg, rgba(34,78,150,0.16), rgba(6,14,34,0.4));
+      --card: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.04);
+      --muted: #9fb0d6;
+      --txt: #eaf4ff;
+      --accent-1: #5aa6ff;
+      --accent-2: #2b6df6;
+      --success: #2ecc71;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(2,8,23,0.6);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-0),var(--bg-1));color:var(--txt);-webkit-font-smoothing:antialiased}
+    a{color:inherit}
+
+    /* App layout */
+    .app{
+      display:grid;
+      grid-template-columns: 260px 1fr;
+      gap:28px;
+      max-width:1200px;
+      margin:28px auto;
+      padding:22px;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:20px;
+      height:calc(100vh - 56px);
+      position:sticky;
+      top:28px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:center;
+    }
+
+    .profile-photo{
+      width:92px;
+      height:92px;
+      border-radius:50%;
+      overflow:hidden;
+      border:3px solid rgba(90,166,255,0.12);
+      box-shadow: 0 6px 20px rgba(9,24,48,0.6);
+      flex-shrink:0;
+    }
+    .profile-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .brand{
+      text-align:center;
+    }
+    .brand h3{margin:8px 0 2px;font-size:18px;letter-spacing:0.4px}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    .sidebar .nav{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:6px;
+    }
+    .nav a{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--muted);
+      text-decoration:none;
+      transition:all .14s ease;
+      font-size:13px;
+    }
+    .nav a:hover{background:rgba(255,255,255,0.02);color:var(--txt);transform:translateY(-2px)}
+    .nav a .dot{
+      width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      box-shadow:0 4px 12px rgba(43,109,246,0.18);
+      flex-shrink:0;
+    }
+
+    .sidebar .footer{
+      margin-top:auto;
+      font-size:12px;color:var(--muted);text-align:center;
+      opacity:0.85;
+    }
+
+    /* MAIN */
+    .main{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    header.top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:6px 10px;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .title h1{font-size:20px;margin:0}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .search{
+      background:var(--glass);
+      padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);
+      color:var(--muted);
+      min-width:220px;
+    }
+    .chip{
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      padding:8px 12px;border-radius:12px;color:#061025;font-weight:700;font-size:13px;
+      box-shadow:0 6px 18px rgba(43,109,246,0.16);
+    }
+
+    /* GRID: stats + sections */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:22px;
+    }
+
+    /* LEFT column sections (stack) */
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+      gap:12px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 8px 30px rgba(2,8,23,0.45);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .card h4{margin:0;color:var(--muted);font-size:13px}
+    .card .big{margin-top:8px;font-weight:800;font-size:20px}
+
+    /* Section: Paket Bot */
+    .panel{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+
+    .pkg{
+      background:linear-gradient(180deg, rgba(90,166,255,0.06), rgba(6,14,34,0.14));
+      border-radius:12px;padding:16px;border:1px solid rgba(90,166,255,0.06);
+      display:flex;flex-direction:column;gap:12px;
+      min-height:140px;
+    }
+    .pkg h3{margin:0;font-size:16px}
+    .pkg .price{font-weight:800;font-size:22px;color:var(--accent-1)}
+    .pkg p{margin:0;color:var(--muted);font-size:13px}
+    .pkg .cta{margin-top:auto;display:flex;gap:8px;align-items:center}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#071426;font-weight:700;text-decoration:none;border:0;
+      box-shadow:0 8px 20px rgba(43,109,246,0.14);
+    }
+    .btn.ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
+
+    /* Panel bot WA pricelist & benefits */
+    .panel-right{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.025);
+      box-shadow:0 8px 28px rgba(2,8,23,0.45);
+    }
+    .panel-right h3{margin:0 0 10px 0}
+    .ram-list{display:flex;flex-direction:column;gap:8px}
+    .ram-item{
+      display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,0.015);
+      font-size:14px;color:var(--muted)
+    }
+
+    .benefits{
+      margin-top:12px;display:flex;flex-direction:column;gap:8px;
+    }
+    .benefits li{list-style:none;color:var(--muted);font-size:14px;display:flex;gap:10px;align-items:center}
+    .benefits li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--success);box-shadow:0 6px 16px rgba(46,204,113,0.08)}
+
+    /* Footer cards */
+    .bottom-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:6px}
+    .small-card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+    .small-card h5{margin:0;color:var(--muted);font-size:13px}
+    .small-card p{margin-top:8px;font-weight:700;font-size:18px}
+
+    /* icons row */
+    .icons{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+    .icons img{width:68px;height:68px;border-radius:12px;object-fit:cover;border:1px solid rgba(255,255,255,0.03)}
+
+    /* RESPONSIVE */
+    @media (max-width:1100px){
+      .app{grid-template-columns: 220px 1fr; padding:18px; max-width:960px}
+      .grid{grid-template-columns: 1fr}
+      .panel{grid-template-columns:1fr}
+    }
+    @media (max-width:780px){
+      .app{grid-template-columns: 1fr; padding:14px; gap:18px}
+      .sidebar{position:relative;height:auto;flex-direction:row;padding:12px;align-items:center}
+      .profile-photo{width:64px;height:64px}
+      .brand h3{font-size:14px}
+      header.top{flex-direction:column;align-items:flex-start;gap:8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="SAGARA SOT BOTZ dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="profile-photo" title="Profil SAGARA SOT BOTZ">
+        <!-- letakkan foto di folder images/1.jpg -->
+        <img src="images/1.jpg" alt="Profil SSB">
+      </div>
+
+      <div class="brand">
+        <h3>SAGARA SOT BOTZ</h3>
+        <p>Bot WA • Node.js</p>
+      </div>
+
+      <nav class="nav" aria-label="Navigation">
+        <a href="#overview"><span class="dot"></span>Overview</a>
+        <a href="#paket"><span class="dot"></span>Paket Bot</a>
+        <a href="#panel"><span class="dot"></span>Panel Bot WA</a>
+        <a href="#keuntungan"><span class="dot"></span>Keuntungan</a>
+      </nav>
+
+      <div class="footer">
+        © SAGARA • <span style="color:var(--muted)">2025</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- HEADER -->
+      <header class="top">
+        <div class="title">
+          <h1>SAGARA SOT BOTZ</h1>
+          <p>Jasa pembuatan & panel Bot WhatsApp (Node.js) — cepat, stabil, bergaransi</p>
+        </div>
+
+        <div class="actions" aria-hidden="false">
+          <div class="search">🔍 Cari paket...</div>
+          <div class="chip">Online</div>
+        </div>
+      </header>
+
+      <!-- GRID: left stack + right panel -->
+      <div class="grid">
+
+        <!-- LEFT (stack) -->
+        <div class="stack">
+
+          <!-- Overview cards -->
+          <section id="overview" aria-labelledby="overview-title">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <h2 id="overview-title" style="font-size:16px">Ringkasan</h2>
+              <div style="color:var(--muted);font-size:13px">Dashboard Sagara</div>
+            </div>
+
+            <div class="cards" role="list">
+              <div class="card" role="listitem">
+                <h4>Total Pendapatan</h4>
+                <div class="big">Rp 5.200.000</div>
+                <div style="color:var(--muted);font-size:13px">Bulan ini</div>
+              </div>
+
+              <div class="card" role="listitem">
+                <h4>Pelanggan</h4>
+                <div class="big">174</div>
+                <div style="color:var(--muted);font-size:13px">Aktif</div>
+              </div>
+
+              <div class="card" role="listitem">
+                <h4>Pesanan</h4>
+                <div class="big">98</div>
+                <div style="color:var(--muted);font-size:13px">Pending & Selesai</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Paket Bot -->
+          <section id="paket" aria-labelledby="paket-title">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0">
+              <h2 id="paket-title" style="font-size:16px">Paket Bot WhatsApp</h2>
+              <div style="color:var(--muted);font-size:13px">Pilih paket & langsung pesan via WA</div>
+            </div>
+
+            <div class="panel">
+              <!-- Paket 1 Bulan -->
+              <div class="pkg" aria-label="Paket 1 Bulan">
+                <div>
+                  <h3>Paket 1 Bulan</h3>
+                  <div class="price">Rp 15.000</div>
+                  <p>Instalasi Node.js bot WA, konfigurasi awal, dan 7 hari garansi teknis.</p>
+                </div>
+                <div class="cta">
+                  <a class="btn" target="_blank" rel="noopener"
+                    href="https://wa.me/6287840275933?text=Saya%20ingin%20membeli%20Paket%201%20Bulan%20SAGARA%20SOT%20BOTZ%20-%20Rp%2015.000">
+                    Beli Sekarang
+                  </a>
+                  <a class="btn ghost" href="mailto:info@example.com">Detail</a>
+                </div>
+              </div>
+
+              <!-- Paket 2 Bulan -->
+              <div class="pkg" aria-label="Paket 2 Bulan">
+                <div>
+                  <h3>Paket 2 Bulan</h3>
+                  <div class="price">Rp 30.000</div>
+                  <p>Durasi 2 bulan + prioritas support; cocok untuk penggunaan aktif.</p>
+                </div>
+                <div class="cta">
+                  <a class="btn" target="_blank" rel="noopener"
+                    href="https://wa.me/6287840275933?text=Saya%20ingin%20membeli%20Paket%202%20Bulan%20SAGARA%20SOT%20BOTZ%20-%20Rp%2030.000">
+                    Beli Sekarang
+                  </a>
+                  <a class="btn ghost" href="#paket">Detail</a>
+                </div>
+              </div>
+
+              <!-- Paket 3 Bulan -->
+              <div class="pkg" aria-label="Paket 3 Bulan">
+                <div>
+                  <h3>Paket 3 Bulan</h3>
+                  <div class="price">Rp 45.000</div>
+                  <p>Langganan 3 bulan + monitoring & prioritas perbaikan.</p>
+                </div>
+                <div class="cta">
+                  <a class="btn" target="_blank" rel="noopener"
+                    href="https://wa.me/6287840275933?text=Saya%20ingin%20membeli%20Paket%203%20Bulan%20SAGARA%20SOT%20BOTZ%20-%20Rp%2045.000">
+                    Beli Sekarang
+                  </a>
+                  <a class="btn ghost" href="#paket">Detail</a>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Panel Bot WA list -->
+          <section id="panel" aria-labelledby="panel-title">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0">
+              <h2 id="panel-title" style="font-size:16px">Pricelist Panel Bot WA</h2>
+              <div style="color:var(--muted);font-size:13px">Pilih RAM sesuai kebutuhan</div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="flex:1;min-width:260px">
+                <div class="card">
+                  <h4>Daftar Harga RAM</h4>
+                  <div style="margin-top:10px" class="ram-list" aria-hidden="false">
+                    <div class="ram-item"><div>Ram 1 GB</div><div>Rp 3.000</div></div>
+                    <div class="ram-item"><div>Ram 2 GB</div><div>Rp 5.000</div></div>
+                    <div class="ram-item"><div>Ram 6 GB</div><div>Rp 8.000</div></div>
+                    <div class="ram-item"><div>Ram 8 GB</div><div>Rp 10.000</div></div>
+                    <div class="ram-item"><div>Ram 10 GB</div><div>Rp 13.000</div></div>
+                    <div class="ram-item"><div>Ram Unlimited</div><div>Rp 18.000</div></div>
+                  </div>
+
+                  <div style="margin-top:12px;color:var(--muted);font-size:13px">
+                    Untuk order panel + setup, klik paket lalu cantumkan pilihan RAM yang diinginkan.
+                  </div>
+                </div>
+              </div>
+
+              <div style="min-width:200px;flex-basis:300px">
+                <div class="card">
+                  <h4>Icon / Foto</h4>
+                  <div class="icons" role="list">
+                    <img src="images/2.jpg" alt="icon1" role="listitem">
+                    <img src="images/3.jpg" alt="icon2" role="listitem">
+                    <img src="images/4.jpg" alt="icon3" role="listitem">
+                    <img src="images/5.jpg" alt="icon4" role="listitem">
+                  </div>
+                  <div style="margin-top:10px;color:var(--muted);font-size:13px">ini adalah waifu <code></code> si owner tertamfan</div>
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+          <!-- Keuntungan -->
+          <section id="keuntungan" aria-labelledby="keuntungan-title" style="margin-top:8px">
+            <h2 id="keuntungan-title" style="font-size:16px;margin-bottom:8px">Keuntungan Panel Bot WA</h2>
+            <div class="card">
+              <ul class="benefits">
+                <li>Menggunakan VPS berkualitas</li>
+                <li>Server terjaga & monitoring</li>
+                <li>Menghemat kuota dan penyimpanan</li>
+                <li>Full garansi & dukungan teknis</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Footer small stats -->
+          <div class="bottom-cards" style="margin-top:12px">
+            <div class="small-card">
+              <h5>Orders</h5>
+              <p>98</p>
+            </div>
+            <div class="small-card">
+              <h5>Customers</h5>
+              <p>174</p>
+            </div>
+            <div class="small-card">
+              <h5>Active Servers</h5>
+              <p>42</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT column -->
+        <aside class="panel-right" aria-label="Quick panel">
+          <h3>Kontak & Quick Actions</h3>
+
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px;align-items:center">
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#061426">WA</div>
+              <div>
+                <div style="font-weight:700">+62 878-4027-5933</div>
+                <div style="color:var(--muted);font-size:13px">Hubungi via WhatsApp</div>
+              </div>
+            </div>
+
+            <a class="btn" target="_blank" rel="noopener"
+              href="https://wa.me/6287840275933?text=Halo%20SAGARA%20SOT%20BOTZ%20%2C%20saya%20mau%20tanya%20tentang%20paket%20dan%20panel">
+              Chat Sekarang
+            </a>
+
+            <div style="margin-top:10px;color:var(--muted);font-size:13px">
+              Info singkat: Semua paket disiapkan menggunakan Node.js (Baileys/Puppeteer/WA API sesuai kebutuhan) dan dikirim ke VPS pilihan.
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:14px 0">
+
+          <h3>Quick Links</h3>
+          <nav style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <a class="btn ghost" href="#paket">Pesan Paket</a>
+            <a class="btn ghost" href="#panel">Lihat Panel</a>
+            <a class="btn ghost" href="#keuntungan">Keuntungan</a>
+          </nav>
+
+        </aside>
+
+      </div>
+
+    </main>
+
+  </div>
+</body>
+</html>
